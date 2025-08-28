@@ -1,4 +1,4 @@
-package main
+package lesson
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func main() {
+func Lesson01PackageHTTP() {
 
 	http.HandleFunc("/demo", demoHandler)
 
