@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -34,6 +35,20 @@ func (u *UserHandler) GetUsersByIdV1(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get user by ID (V1)",
 		"user_id": id,
+	})
+}
+
+func (u *UserHandler) GetUsersByUuidV1(ctx *gin.Context) {
+	uuidStr := ctx.Param("uuid")
+
+	_, err := uuid.Parse(uuidStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be a UUID"})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message":   "Get user by UUID (V1)",
+		"user_uuid": uuidStr,
 	})
 }
 

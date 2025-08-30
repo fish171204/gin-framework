@@ -16,6 +16,7 @@ func Lesson03RouteGroup() {
 			userHandlerV1 := v1handler.NewUserHandler()
 			user.GET("", userHandlerV1.GetUsersV1)
 			user.GET("/:id", userHandlerV1.GetUsersByIdV1)
+			user.GET("/admin/:uuid", userHandlerV1.GetUsersByUuidV1)
 			user.POST("", userHandlerV1.PostUsersV1)
 			user.PUT("/:id", userHandlerV1.PutUsersV1)
 			user.DELETE("/:id", userHandlerV1.DeleteUsersV1)
