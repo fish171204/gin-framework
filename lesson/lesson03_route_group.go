@@ -26,7 +26,7 @@ func Lesson03RouteGroup() {
 		{
 			productHandlerV1 := v1handler.NewProductHandler()
 			product.GET("", productHandlerV1.GetProductV1)
-			product.GET("/:id", productHandlerV1.GetProductByIdV1)
+			product.GET("/:slug", productHandlerV1.GetProductBySlugV1)
 			product.POST("", productHandlerV1.PostProductV1)
 			product.PUT("/:id", productHandlerV1.PutProductV1)
 			product.DELETE("/:id", productHandlerV1.DeleteProductV1)
