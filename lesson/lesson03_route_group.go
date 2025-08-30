@@ -37,6 +37,14 @@ func Lesson03RouteGroup() {
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryByCategoryV1)
 		}
+
+		news := v1.Group("/news")
+		{
+			newsHandlerV1 := v1handler.NewNewsHandler()
+			// trick dùng parameter optional = DefaultQuery (Query optional)
+			news.GET("", newsHandlerV1.GetNewsV1)
+			news.GET("/:slug", newsHandlerV1.GetNewsV1)
+		}
 	}
 
 	v2 := r.Group("/api/v2")
