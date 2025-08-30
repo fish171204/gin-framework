@@ -2,6 +2,7 @@ package v1handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,10 +20,20 @@ func (u *UserHandler) GetUsersV1(ctx *gin.Context) {
 }
 
 func (u *UserHandler) GetUsersByIdV1(ctx *gin.Context) {
-	id := ctx.Param("id")
+	idStr := ctx.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be  a number"})
+		return
+	}
+	if id <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be positive"})
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get user by ID (V1)",
-		"id":      id,
+		"user_id": id,
 	})
 }
 
