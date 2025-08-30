@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+
+	"github.com/google/uuid"
 )
 
 func ValidationRequired(fieldName, value string) error {
@@ -41,4 +43,13 @@ func ValidationPositiveInt(fieldName, value string) (int, error) {
 	}
 
 	return p, nil
+}
+
+func ValidationUuid(fieldName, value string) (uuid.UUID, error) {
+	uid, err := uuid.Parse(value)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("%s must be a UUID", fieldName)
+	}
+
+	return uid, nil
 }
