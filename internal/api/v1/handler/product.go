@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,8 +28,8 @@ func NewProductHandler() *ProductHandler {
 func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 	search := ctx.Query("search")
 
-	if search == "" {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search is required"})
+	if err := utils.ValidationRequired("Search", search); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
