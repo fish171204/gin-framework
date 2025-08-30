@@ -12,13 +12,15 @@ import (
 type ProductHandler struct {
 }
 
-// elon-musk-da- ....
-// [a-z0-9] = abc
-// [-.] = -
-// [-.][a-z0-9] = -abc
-// [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
-var slugRegex = regexp.MustCompile(`[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
-var searchRegex = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
+var (
+	// elon-musk-da- ....
+	// [a-z0-9] = abc
+	// [-.] = -
+	// [-.][a-z0-9] = -abc
+	// [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
+	slugRegex   = regexp.MustCompile(`[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
+	searchRegex = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
+)
 
 func NewProductHandler() *ProductHandler {
 	return &ProductHandler{}

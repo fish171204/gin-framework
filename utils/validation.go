@@ -53,3 +53,20 @@ func ValidationUuid(fieldName, value string) (uuid.UUID, error) {
 
 	return uid, nil
 }
+
+func ValidationInList(fieldName, value string, allowed map[string]bool) error {
+	if !allowed[value] {
+		return fmt.Errorf("%s must be one of: %v", fieldName, keys(allowed))
+	}
+
+	return nil
+}
+
+func keys(m map[string]bool) []string {
+	var k []string
+	for key := range m {
+		k = append(k, key)
+	}
+
+	return k
+}
