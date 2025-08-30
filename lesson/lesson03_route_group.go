@@ -31,6 +31,12 @@ func Lesson03RouteGroup() {
 			product.PUT("/:id", productHandlerV1.PutProductV1)
 			product.DELETE("/:id", productHandlerV1.DeleteProductV1)
 		}
+
+		category := v1.Group("/categories")
+		{
+			categoryHandlerV1 := v1handler.NewCategoryHandler()
+			category.GET("/:category", categoryHandlerV1.GetCategoryByCategoryV1)
+		}
 	}
 
 	v2 := r.Group("/api/v2")
