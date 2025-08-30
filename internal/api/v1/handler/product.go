@@ -3,6 +3,7 @@ package v1handler
 import (
 	"net/http"
 	"regexp"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,7 @@ type ProductHandler struct {
 // [-.][a-z0-9] = -abc
 // [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
 var slugRegex = regexp.MustCompile(`[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
+var searchRegex = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
 
 func NewProductHandler() *ProductHandler {
 	return &ProductHandler{}
@@ -23,7 +25,36 @@ func NewProductHandler() *ProductHandler {
 
 // PRODUCT V1
 func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, gin.H{"message": "List all products (V1)"})
+	search := ctx.Query("search")
+
+	if search == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search is required"})
+		return
+	}
+
+	if len(search) < 3 || len(search) > 50 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must be berween 3 and 50 characters"})
+		return
+	}
+
+	if !searchRegex.MatchString(search) {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must contain only letters, numbers and spaces"})
+		return
+	}
+
+	// Đề bài: limit nếu trường hợp không tồn tại thì sẽ là 10 và phải là số nguyên dương
+	limitStr := ctx.DefaultQuery("limit", "10")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil || limit <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Limit must be a positive number"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "List all products (V1)",
+		"search":  search,
+		"limit":   limit,
+	})
 }
 
 func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
