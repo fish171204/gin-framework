@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 )
 
 func ValidationRequired(fieldName, value string) error {
@@ -28,4 +29,16 @@ func ValidationRegex(value string, re *regexp.Regexp, errorMessage string) error
 	}
 
 	return nil
+}
+
+func ValidationPositiveInt(fieldName, value string) (int, error) {
+	p, err := strconv.Atoi(value)
+	if err != nil {
+		return 0, fmt.Errorf("%s must be  a number", fieldName)
+	}
+	if p <= 0 {
+		return 0, fmt.Errorf("%s must be positive", fieldName)
+	}
+
+	return p, nil
 }

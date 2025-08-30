@@ -2,8 +2,8 @@ package v1handler
 
 import (
 	"net/http"
-	"strconv"
 
+	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -22,14 +22,10 @@ func (u *UserHandler) GetUsersV1(ctx *gin.Context) {
 
 func (u *UserHandler) GetUsersByIdV1(ctx *gin.Context) {
 	idStr := ctx.Param("id")
-	id, err := strconv.Atoi(idStr)
+
+	id, err := utils.ValidationPositiveInt("ID", idStr)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be  a number"})
-		return
-	}
-	if id <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "ID must be positive"})
-		return
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
