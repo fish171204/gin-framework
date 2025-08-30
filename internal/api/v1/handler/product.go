@@ -38,8 +38,8 @@ func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 		return
 	}
 
-	if !searchRegex.MatchString(search) {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must contain only letters, numbers and spaces"})
+	if err := utils.ValidationRegex(search, searchRegex, "Search must contain only letters, numbers and spaces"); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -61,10 +61,11 @@ func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
 	slug := ctx.Param("slug")
 
-	if !slugRegex.MatchString(slug) {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Slug must contain only lowercase letter, number, hyphens and dots"})
+	if err := utils.ValidationRegex(slug, slugRegex, "Slug must contain only lowercase letter, number, hyphens and dots"); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get product by Slug (V1)",
 		"slug":    slug,
