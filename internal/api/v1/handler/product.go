@@ -33,6 +33,11 @@ func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 		return
 	}
 
+	if err := utils.ValidationStringLength("Search", search, 3, 50); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	if len(search) < 3 || len(search) > 50 {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must be berween 3 and 50 characters"})
 		return
