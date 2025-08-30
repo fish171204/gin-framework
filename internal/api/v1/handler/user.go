@@ -26,6 +26,7 @@ func (u *UserHandler) GetUsersByIdV1(ctx *gin.Context) {
 	id, err := utils.ValidationPositiveInt("ID", idStr)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
