@@ -38,11 +38,6 @@ func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 		return
 	}
 
-	if len(search) < 3 || len(search) > 50 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must be berween 3 and 50 characters"})
-		return
-	}
-
 	if !searchRegex.MatchString(search) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Search must contain only letters, numbers and spaces"})
 		return
