@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -47,6 +48,9 @@ func HandleValidationErrors(err error) gin.H {
 				errors[e.Field()] = e.Field() + " phải đúng định dạng email"
 			case "datetime":
 				errors[e.Field()] = e.Field() + " phải theo đúng định dạng YYYY-MM-DD"
+			case "file_ext":
+				allowedValue := strings.Join(strings.Split(e.Param(), " "), ",")
+				errors[e.Field()] = fmt.Sprintf("%s chỉ cho phép những file có extension: %s", e.Field(), allowedValue)
 			// category
 			case "oneof":
 				allowedValue := strings.Join(strings.Split(e.Param(), " "), ",")
@@ -110,9 +114,34 @@ func RegisterValidators() error {
 		return actualValue <= maxVal
 	})
 
-	// v.RegisterValidation("file_ext", func(fl validator.FieldLevel) bool {
-	// 	filename := fl.Field().String()
-	// })
+	v.RegisterValidation("file_ext", func(fl validator.FieldLevel) bool {
+		filename := fl.Field().String()
+
+		allowedStr := fl.Param()
+		if allowedStr == "" {
+			return false
+		}
+
+		// Example:
+		// allowedExt := strings.Fields(allowedStr)  // ["jpg", "png", "gif"]
+		// filepath.Ext(filename)  // → ".JPG"
+		// strings.ToLower(".JPG")  // → ".jpg"
+		// strings.TrimPrefix(".jpg", ".")  // → "jpg"
+		allowedExt := strings.Fields(allowedStr)
+		ext := strings.TrimPrefix(strings.ToLower(filepath.Ext(filename)), ".")
+
+		for _, allowed := range allowedExt {
+			if ext == strings.ToLower(allowed) {
+				return true
+			}
+		}
+
+		return false
+	})
 
 	return nil
 }
+
+// fl.Param() = "Quy tắc" (từ dev định nghĩa)
+// fl.Field().Int() , fl.Field().String().... = "Thực tế" (từ user gửi lên)
+// Validator = So sánh "Thực tế" với "Quy tắc"

@@ -32,7 +32,7 @@ type PostProductV1Param struct {
 
 type ProductImage struct {
 	ImageName string `json:"image_name" binding:"required"`
-	ImageLink string `json:"image_link" binding:"required"`
+	ImageLink string `json:"image_link" binding:"required,file_ext=jpg png gif"`
 }
 
 func NewProductHandler() *ProductHandler {
