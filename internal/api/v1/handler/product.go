@@ -24,8 +24,9 @@ type GetProductV1Param struct {
 }
 
 type PostProductV1Param struct {
-	Name  string `json:"name" binding:"required,min=3,max=100"`
-	Price int    `json:"price" binding:"required,min=100000"`
+	Name    string `json:"name" binding:"required,min=3,max=100"`
+	Price   int    `json:"price" binding:"required,min=100000"`
+	Display bool   `json:"display" binding:"omitempty"`
 }
 
 func NewProductHandler() *ProductHandler {
@@ -85,6 +86,7 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		"message": "Create product (V1)",
 		"name":    params.Name,
 		"price":   params.Price,
+		"display": params.Display,
 	})
 }
 
