@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -25,9 +26,13 @@ func HandleValidationErrors(err error) gin.H {
 			case "lte":
 				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn hoặc bằng giá trị tối đa là: %s", e.Field(), e.Param())
 			case "min":
-				errors[e.Field()] = fmt.Sprintf("%s phải từ %s", e.Field(), e.Param())
+				errors[e.Field()] = fmt.Sprintf("%s phải từ %s ký tự", e.Field(), e.Param())
 			case "max":
-				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s", e.Field(), e.Param())
+				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s ký tự", e.Field(), e.Param())
+			case "min_int":
+				errors[e.Field()] = fmt.Sprintf("%s phải có giá trị lớn hơn hoặc bằng %s", e.Field(), e.Param())
+			case "max_int":
+				errors[e.Field()] = fmt.Sprintf("%s phải có giá trị bé hơn hoặc bằng %s", e.Field(), e.Param())
 			// users
 			case "uuid":
 				errors[e.Field()] = e.Field() + " phải là UUID hợp lệ"
@@ -76,5 +81,30 @@ func RegisterValidators() error {
 	v.RegisterValidation("search", func(fl validator.FieldLevel) bool {
 		return searchRegex.MatchString(fl.Field().String())
 	})
+
+	v.RegisterValidation("min_int", func(fl validator.FieldLevel) bool {
+		minStr := fl.Param()
+		minVal, err := strconv.ParseInt(minStr, 10, 64)
+		if err != nil {
+			return false
+		}
+
+		return fl.Field().Int() >= minVal
+		// Base
+		// 10: hệ thập phân (decimal)
+		// 16: hệ thập lục phân (hex, ví dụ "FF" => 255)
+		// 2: hệ nhị phân (binary, ví dụ "1010" => 10)
+	})
+
+	v.RegisterValidation("max_int", func(fl validator.FieldLevel) bool {
+		maxStr := fl.Param()
+		maxVal, err := strconv.ParseInt(maxStr, 10, 64)
+		if err != nil {
+			return false
+		}
+
+		return fl.Field().Int() <= maxVal
+	})
+
 	return nil
 }

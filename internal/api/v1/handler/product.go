@@ -25,8 +25,8 @@ type GetProductV1Param struct {
 
 type PostProductV1Param struct {
 	Name         string       `json:"name" binding:"required,min=3,max=100"`
-	Price        int          `json:"price" binding:"required,min=100000"`
-	Display      bool         `json:"display" binding:"omitempty"`
+	Price        int          `json:"price" binding:"required,min_int=100000"`
+	Display      *bool        `json:"display" binding:"omitempty"`
 	ProductImage ProductImage `json:"product_image" binding:"required"`
 }
 
