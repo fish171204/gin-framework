@@ -3,70 +3,78 @@ package utils
 import (
 	"fmt"
 	"regexp"
-	"strconv"
+	"strings"
 
-	"github.com/google/uuid"
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
-func ValidationRequired(fieldName, value string) error {
-	if value == "" {
-		return fmt.Errorf("%s is required", fieldName)
+func HandleValidationErrors(err error) gin.H {
+	if validationError, ok := err.(validator.ValidationErrors); ok {
+		errors := make(map[string]string)
+
+		for _, e := range validationError {
+			switch e.Tag() {
+			case "gt":
+				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn giá trị tối thiểu là: %s", e.Field(), e.Param())
+			case "lt":
+				errors[e.Field()] = fmt.Sprintf("%s phải nhỏ hơn giá trị tối thiểu là: %s", e.Field(), e.Param())
+			case "gte":
+				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn hoặc bằng giá trị tối thiểu là: %s", e.Field(), e.Param())
+			case "lte":
+				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn hoặc bằng giá trị tối đa là: %s", e.Field(), e.Param())
+			case "min":
+				errors[e.Field()] = fmt.Sprintf("%s phải từ %s", e.Field(), e.Param())
+			case "max":
+				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s", e.Field(), e.Param())
+			// users
+			case "uuid":
+				errors[e.Field()] = e.Field() + " phải là UUID hợp lệ"
+			// products
+			case "slug":
+				errors[e.Field()] = e.Field() + " chỉ được chứa chữ thường, số, dấu gạch ngang hoặc dấu chấm"
+			case "required":
+				errors[e.Field()] = e.Field() + " là bắt buộc"
+			case "search":
+				errors[e.Field()] = e.Field() + " chỉ được chứa chữ thường, in hoa ,số và khoảng trắng"
+			case "email":
+				errors[e.Field()] = e.Field() + " phải đúng định dạng email"
+			case "datetime":
+				errors[e.Field()] = e.Field() + " phải theo đúng định dạng YYYY-MM-DD"
+			// category
+			case "oneof":
+				allowedValue := strings.Join(strings.Split(e.Param(), " "), ",")
+				errors[e.Field()] = fmt.Sprintf("%s phải là một trong các giá trị: %s", e.Field(), allowedValue)
+			}
+
+		}
+		return gin.H{"error": errors}
+
 	}
 
+	return gin.H{"error": "Yêu cầu không hợp lệ " + err.Error()}
+}
+
+func RegisterValidators() error {
+	v, ok := binding.Validator.Engine().(*validator.Validate)
+	if !ok {
+		return fmt.Errorf("failed to get validator engine")
+	}
+
+	// elon-musk-da- ....
+	// [a-z0-9] = abc
+	// [-.] = -
+	// [-.][a-z0-9] = -abc
+	// [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
+	var slugRegex = regexp.MustCompile(`^[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
+	v.RegisterValidation("slug", func(fl validator.FieldLevel) bool {
+		return slugRegex.MatchString(fl.Field().String())
+	})
+
+	var searchRegex = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
+	v.RegisterValidation("search", func(fl validator.FieldLevel) bool {
+		return searchRegex.MatchString(fl.Field().String())
+	})
 	return nil
-}
-
-func ValidationStringLength(fieldName, value string, min, max int) error {
-	l := len(value)
-	if l < min || l > max {
-		return fmt.Errorf("%s must be berween %d and %d characters", fieldName, min, max)
-	}
-
-	return nil
-}
-
-func ValidationRegex(value string, re *regexp.Regexp, errorMessage string) error {
-	if !re.MatchString(value) {
-		return fmt.Errorf("%s", errorMessage)
-	}
-
-	return nil
-}
-
-func ValidationPositiveInt(fieldName, value string) (int, error) {
-	p, err := strconv.Atoi(value)
-	if err != nil {
-		return 0, fmt.Errorf("%s must be  a number", fieldName)
-	}
-	if p <= 0 {
-		return 0, fmt.Errorf("%s must be positive", fieldName)
-	}
-
-	return p, nil
-}
-
-func ValidationUuid(fieldName, value string) (uuid.UUID, error) {
-	uid, err := uuid.Parse(value)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("%s must be a UUID", fieldName)
-	}
-
-	return uid, nil
-}
-
-func ValidationInList(fieldName, value string, allowed map[string]bool) error {
-	if !allowed[value] {
-		return fmt.Errorf("%s must be one of: %v", fieldName, keys(allowed))
-	}
-
-	return nil
-}
-
-func keys(m map[string]bool) []string {
-	var k []string
-	for key := range m {
-		k = append(k, key)
-	}
-
-	return k
 }
