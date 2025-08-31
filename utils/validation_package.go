@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -17,7 +18,6 @@ func HandleValidationErrors(err error) gin.H {
 			switch e.Tag() {
 			case "gt":
 				errors[e.Field()] = e.Field() + " phải lớn hơn giá trị tối thiểu"
-
 			case "uuid":
 				errors[e.Field()] = e.Field() + " phải là UUID hợp lệ"
 			case "slug":
@@ -26,6 +26,9 @@ func HandleValidationErrors(err error) gin.H {
 				errors[e.Field()] = fmt.Sprintf("%s phải từ %s ký tự", e.Field(), e.Param())
 			case "max":
 				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s ký tự", e.Field(), e.Param())
+			case "oneof":
+				allowedValue := strings.Join(strings.Split(e.Param(), " "), ",")
+				errors[e.Field()] = fmt.Sprintf("%s phải là một trong các giá trị: %s", e.Field(), allowedValue)
 			}
 		}
 		return gin.H{"error": errors}
@@ -38,7 +41,7 @@ func HandleValidationErrors(err error) gin.H {
 func RegisterValidators() error {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
-		return fmt.Errorf("Failed to get validator engine")
+		return fmt.Errorf("failed to get validator engine")
 	}
 
 	var slugRegex = regexp.MustCompile(`^[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
