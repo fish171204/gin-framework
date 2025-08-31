@@ -12,6 +12,10 @@ import (
 type ProductHandler struct {
 }
 
+type GetProductBySlugV1Param struct {
+	Slug string `uri:"slug" binding:"slug,min=5,max=100"`
+}
+
 var (
 	// elon-musk-da- ....
 	// [a-z0-9] = abc
@@ -61,16 +65,15 @@ func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
 }
 
 func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
-	slug := ctx.Param("slug")
-
-	if err := utils.ValidationRegex(slug, slugRegex, "Slug must contain only lowercase letter, number, hyphens and dots"); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var param GetProductBySlugV1Param
+	if err := ctx.ShouldBindUri(&param); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Get product by Slug (V1)",
-		"slug":    slug,
+		"slug":    param.Slug,
 	})
 }
 
