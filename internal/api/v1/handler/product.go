@@ -88,6 +88,11 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		return
 	}
 
+	if params.Display == nil {
+		defaultDisplay := true
+		params.Display = &defaultDisplay
+	}
+
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message":       "Create product (V1)",
 		"name":          params.Name,
