@@ -89,7 +89,9 @@ func RegisterValidators() error {
 			return false
 		}
 
-		return fl.Field().Int() >= minVal
+		actualValue := fl.Field().Int()
+
+		return actualValue >= minVal
 		// Base
 		// 10: hệ thập phân (decimal)
 		// 16: hệ thập lục phân (hex, ví dụ "FF" => 255)
@@ -103,8 +105,14 @@ func RegisterValidators() error {
 			return false
 		}
 
-		return fl.Field().Int() <= maxVal
+		actualValue := fl.Field().Int()
+
+		return actualValue <= maxVal
 	})
+
+	// v.RegisterValidation("file_ext", func(fl validator.FieldLevel) bool {
+	// 	filename := fl.Field().String()
+	// })
 
 	return nil
 }
