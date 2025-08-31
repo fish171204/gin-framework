@@ -2,8 +2,7 @@ package v1handler
 
 import (
 	"net/http"
-	"regexp"
-	"strconv"
+	"time"
 
 	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
@@ -16,15 +15,13 @@ type GetProductBySlugV1Param struct {
 	Slug string `uri:"slug" binding:"slug,min=5,max=100"`
 }
 
-var (
-	// elon-musk-da- ....
-	// [a-z0-9] = abc
-	// [-.] = -
-	// [-.][a-z0-9] = -abc
-	// [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
-	slugRegex   = regexp.MustCompile(`[a-z0-9]+(?:[-.][a-z0-9]+)*$`)
-	searchRegex = regexp.MustCompile(`^[a-zA-Z0-9\s]+$`)
-)
+// omitempty = trống
+type GetProductV1Param struct {
+	Search string `form:"search" binding:"search,required,min=5,max=100"`
+	Limit  int    `form:"limit" binding:"omitempty,gte=1,lte=100"`
+	Email  string `form:"email" binding:"omitempty,email"`
+	Date   string `form:"date" binding:"omitempty,datetime=2006-01-02"`
+}
 
 func NewProductHandler() *ProductHandler {
 	return &ProductHandler{}
@@ -32,35 +29,30 @@ func NewProductHandler() *ProductHandler {
 
 // PRODUCT V1
 func (u *ProductHandler) GetProductV1(ctx *gin.Context) {
-	search := ctx.Query("search")
-
-	if err := utils.ValidationRequired("Search", search); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	var params GetProductV1Param
+	if err := ctx.ShouldBindQuery(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
 		return
 	}
 
-	if err := utils.ValidationStringLength("Search", search, 3, 50); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if params.Limit == 0 {
+		params.Limit = 1
 	}
 
-	if err := utils.ValidationRegex(search, searchRegex, "Search must contain only letters, numbers and spaces"); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if params.Email == "" {
+		params.Email = "No email"
 	}
 
-	// Đề bài: limit nếu trường hợp không tồn tại thì sẽ là 10 và phải là số nguyên dương
-	limitStr := ctx.DefaultQuery("limit", "10")
-	limit, err := strconv.Atoi(limitStr)
-	if err != nil || limit <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Limit must be a positive number"})
-		return
+	if params.Date == "" {
+		params.Date = time.Now().Format("2006-01-02")
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "List all products (V1)",
-		"search":  search,
-		"limit":   limit,
+		"search":  params.Search,
+		"limit":   params.Limit,
+		"email":   params.Email,
+		"date":    params.Date,
 	})
 }
 
