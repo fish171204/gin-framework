@@ -70,7 +70,14 @@ func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
 }
 
 func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
-	ctx.JSON(http.StatusCreated, gin.H{"message": "Create product (V1)"})
+	body, err := ctx.GetRawData()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, "Error read body request")
+	}
+
+	ctx.JSON(http.StatusCreated, gin.H{
+		"message": "Create product (V1)",
+		"data":    string(body)})
 }
 
 func (u *ProductHandler) PutProductV1(ctx *gin.Context) {
