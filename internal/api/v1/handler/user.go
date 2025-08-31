@@ -10,7 +10,8 @@ import (
 type UserHandler struct {
 }
 
-// gt=0 --> >= 0
+// Tag(): gt=0 --> >= 0
+// Field(): ID
 type GetUsersByIdV1Param struct {
 	ID int `uri:"id" binding:"gt=0"`
 }

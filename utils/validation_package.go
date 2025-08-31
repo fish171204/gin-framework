@@ -13,6 +13,9 @@ func HandleValidationErrors(err error) gin.H {
 			switch e.Tag() {
 			case "gt":
 				errors[e.Field()] = e.Field() + " phải lớn hơn giá trị tối thiểu"
+
+			case "uuid":
+				errors[e.Field()] = e.Field() + " phải là UUID hợp lệ"
 			}
 		}
 		return gin.H{"error": errors}
