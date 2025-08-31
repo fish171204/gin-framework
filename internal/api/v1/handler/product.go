@@ -23,6 +23,11 @@ type GetProductV1Param struct {
 	Date   string `form:"date" binding:"omitempty,datetime=2006-01-02"`
 }
 
+type PostProductV1Param struct {
+	Name  string `json:"name" binding:"required,min=3,max=100"`
+	Price int    `json:"price" binding:"required,min=100000"`
+}
+
 func NewProductHandler() *ProductHandler {
 	return &ProductHandler{}
 }
@@ -70,14 +75,17 @@ func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
 }
 
 func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
-	body, err := ctx.GetRawData()
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, "Error read body request")
+	var params PostProductV1Param
+	if err := ctx.ShouldBindJSON(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
+		return
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message": "Create product (V1)",
-		"data":    string(body)})
+		"name":    params.Name,
+		"price":   params.Price,
+	})
 }
 
 func (u *ProductHandler) PutProductV1(ctx *gin.Context) {

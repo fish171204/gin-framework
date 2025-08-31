@@ -25,9 +25,9 @@ func HandleValidationErrors(err error) gin.H {
 			case "lte":
 				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn hoặc bằng giá trị tối đa là: %s", e.Field(), e.Param())
 			case "min":
-				errors[e.Field()] = fmt.Sprintf("%s phải từ %s ký tự", e.Field(), e.Param())
+				errors[e.Field()] = fmt.Sprintf("%s phải từ %s", e.Field(), e.Param())
 			case "max":
-				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s ký tự", e.Field(), e.Param())
+				errors[e.Field()] = fmt.Sprintf("%s phải ít hơn %s", e.Field(), e.Param())
 			// users
 			case "uuid":
 				errors[e.Field()] = e.Field() + " phải là UUID hợp lệ"
