@@ -16,6 +16,7 @@ type GetProductBySlugV1Param struct {
 }
 
 // omitempty = trống
+// dive = kiểm tra phần bên trong (slice struct)
 type GetProductV1Param struct {
 	Search string `form:"search" binding:"search,required,min=5,max=100"`
 	Limit  int    `form:"limit" binding:"omitempty,gte=1,lte=100"`
@@ -23,17 +24,22 @@ type GetProductV1Param struct {
 	Date   string `form:"date" binding:"omitempty,datetime=2006-01-02"`
 }
 
-type PostProductV1Param struct {
-	Name         string       `json:"name" binding:"required,min=3,max=100"`
-	Price        int          `json:"price" binding:"required,min_int=100000"`
-	Display      *bool        `json:"display" binding:"omitempty"`
-	ProductImage ProductImage `json:"product_image" binding:"required"`
-	Tags         []string     `json:"tags" binding:"required,gt=3,lt=5"`
-}
-
 type ProductImage struct {
 	ImageName string `json:"image_name" binding:"required"`
 	ImageLink string `json:"image_link" binding:"required,file_ext=jpg png gif"`
+}
+
+type ProductAttribute struct {
+	AttributeName  string `json:"attribute_name" binding:"required"`
+	AttributeValue string `json:"attribute_value" binding:"required"`
+}
+type PostProductV1Param struct {
+	Name             string             `json:"name" binding:"required,min=3,max=100"`
+	Price            int                `json:"price" binding:"required,min_int=100000"`
+	Display          *bool              `json:"display" binding:"omitempty"`
+	ProductImage     ProductImage       `json:"product_image" binding:"required"`
+	Tags             []string           `json:"tags" binding:"required,gt=3,lt=5"`
+	ProductAttribute []ProductAttribute `json:"product_attribute" binding:"required,gt=0,dive"`
 }
 
 func NewProductHandler() *ProductHandler {
@@ -95,12 +101,13 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{
-		"message":       "Create product (V1)",
-		"name":          params.Name,
-		"price":         params.Price,
-		"display":       params.Display,
-		"product_image": params.ProductImage,
-		"tags":          params.Tags,
+		"message":           "Create product (V1)",
+		"name":              params.Name,
+		"price":             params.Price,
+		"display":           params.Display,
+		"product_image":     params.ProductImage,
+		"tags":              params.Tags,
+		"product_attribute": params.ProductAttribute,
 	})
 }
 

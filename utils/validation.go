@@ -17,6 +17,25 @@ func HandleValidationErrors(err error) gin.H {
 		errors := make(map[string]string)
 
 		for _, e := range validationError {
+			root := strings.Split(e.Namespace(), ".")[0]
+
+			rawPath := strings.TrimPrefix(e.Namespace(), root+".")
+
+			parts := strings.Split(rawPath, ".")
+
+			for i, part := range parts {
+				if strings.Contains("part", "[") {
+					idx := strings.Index(part, "[")
+					base := camelToSnake(part[:idx]) // => 0 đến trước [
+					index := part[idx:]
+					parts[i] = base + index
+				} else {
+					parts[i] = camelToSnake(part)
+				}
+			}
+
+			fieldPath := strings.Join(parts, ".")
+
 			switch e.Tag() {
 			case "gt":
 				errors[e.Field()] = fmt.Sprintf("%s phải lớn hơn : %s", e.Field(), e.Param())
@@ -40,8 +59,8 @@ func HandleValidationErrors(err error) gin.H {
 			// products
 			case "slug":
 				errors[e.Field()] = e.Field() + " chỉ được chứa chữ thường, số, dấu gạch ngang hoặc dấu chấm"
-			case "required":
-				errors[e.Field()] = e.Field() + " là bắt buộc"
+			case "required": // case slice struct
+				errors[fieldPath] = fieldPath + " là bắt buộc"
 			case "search":
 				errors[e.Field()] = e.Field() + " chỉ được chứa chữ thường, in hoa ,số và khoảng trắng"
 			case "email":
