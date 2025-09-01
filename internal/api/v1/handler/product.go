@@ -1,11 +1,13 @@
 package v1handler
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type ProductHandler struct {
@@ -106,6 +108,17 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		params.Display = &defaultDisplay
 	}
 
+	for key := range params.ProductInfo {
+		if _, err := uuid.Parse(key); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"errors": gin.H{
+					"product_info": fmt.Sprintf("Key '%s' trong product_info không phải là UUID hợp lệ", key),
+				},
+			})
+			return
+		}
+	}
+
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message":           "Create product (V1)",
 		"name":              params.Name,
@@ -114,6 +127,7 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		"product_image":     params.ProductImage,
 		"tags":              params.Tags,
 		"product_attribute": params.ProductAttribute,
+		"product_info":      params.ProductInfo,
 	})
 }
 
