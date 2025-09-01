@@ -51,6 +51,7 @@ func Lesson03RouteGroup() {
 			// trick dùng parameter optional = DefaultQuery (Query optional)
 			news.GET("", newsHandlerV1.GetNewsV1)
 			news.GET("/:slug", newsHandlerV1.GetNewsV1)
+			news.POST("/", newsHandlerV1.PostNewsV1)
 		}
 	}
 
