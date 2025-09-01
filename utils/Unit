@@ -1,0 +1,25 @@
+// Example case: slice struct
+
+// e.Namespace()
+e.Namespace() = PostProductsV1Param.ProductAttribute[1].AttributeName
+
+// root := strings.Split(e.Namespace(), ".")
+"PostProductsV1Param", "ProductAttribute[1]", "AttributeName"
+
+// root := strings.Split(e.Namespace(), ".")[0]
+"PostProductsV1Param"
+
+// root+"."
+"PostProductsV1Param."
+
+// rawPath := strings.TrimPrefix(e.Namespace(), root+".") 
+"ProductAttribute[1].AttributeName"
+
+// parts := strings.Split(rawPath, ".")
+"ProductAttribute[1]", "AttributeName"
+
+
+...
+// ProductAttribute[1].AttributeName => camel case
+// End: product_attribute[1].attribute_name => snake case
+
