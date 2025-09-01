@@ -48,6 +48,7 @@ type PostProductV1Param struct {
 	Tags             []string               `json:"tags" binding:"required,gt=3,lt=5"`
 	ProductAttribute []ProductAttribute     `json:"product_attribute" binding:"required,gt=0,dive"`
 	ProductInfo      map[string]ProductInfo `json:"product_info" binding:"required,gt=0,dive"`
+	ProductMetaData  map[string]any         `json:"product_metadata" binding:"omitempty"`
 }
 
 func NewProductHandler() *ProductHandler {
@@ -128,6 +129,7 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		"tags":              params.Tags,
 		"product_attribute": params.ProductAttribute,
 		"product_info":      params.ProductInfo,
+		"product_metadata":  params.ProductMetaData,
 	})
 }
 

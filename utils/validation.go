@@ -92,7 +92,7 @@ func RegisterValidators() error {
 
 	// elon-musk-da- ....
 	// [a-z0-9] = abc
-	// [-.] = -
+	// [-.] = - or .
 	// [-.][a-z0-9] = -abc
 	// [a-z0-9]+(?:[-.][a-z0-9]+)*$ = abcas-abc-abac... (nhieu)
 	var slugRegex = regexp.MustCompile(`^[a-z0-9]+(?:[-.][a-z0-9]+)*$`)

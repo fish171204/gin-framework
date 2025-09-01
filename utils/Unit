@@ -1,4 +1,4 @@
-// Example case: slice struct
+// Example case: slice struct, map struct, ...
 
 // e.Namespace()
 e.Namespace() = PostProductsV1Param.ProductAttribute[1].AttributeName
