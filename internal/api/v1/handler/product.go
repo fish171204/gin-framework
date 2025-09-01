@@ -16,7 +16,7 @@ type GetProductBySlugV1Param struct {
 }
 
 // omitempty = trống
-// dive = kiểm tra phần bên trong (slice struct)
+// dive = kiểm tra phần bên trong (slice struct, map struct ,...)
 type GetProductV1Param struct {
 	Search string `form:"search" binding:"search,required,min=5,max=100"`
 	Limit  int    `form:"limit" binding:"omitempty,gte=1,lte=100"`
@@ -33,13 +33,19 @@ type ProductAttribute struct {
 	AttributeName  string `json:"attribute_name" binding:"required"`
 	AttributeValue string `json:"attribute_value" binding:"required"`
 }
+
+type ProductInfo struct {
+	InfoKey   string `json:"info_key" binding:"required"`
+	InfoValue string `json:"info_value" binding:"required"`
+}
 type PostProductV1Param struct {
-	Name             string             `json:"name" binding:"required,min=3,max=100"`
-	Price            int                `json:"price" binding:"required,min_int=100000"`
-	Display          *bool              `json:"display" binding:"omitempty"`
-	ProductImage     ProductImage       `json:"product_image" binding:"required"`
-	Tags             []string           `json:"tags" binding:"required,gt=3,lt=5"`
-	ProductAttribute []ProductAttribute `json:"product_attribute" binding:"required,gt=0,dive"`
+	Name             string                 `json:"name" binding:"required,min=3,max=100"`
+	Price            int                    `json:"price" binding:"required,min_int=100000"`
+	Display          *bool                  `json:"display" binding:"omitempty"`
+	ProductImage     ProductImage           `json:"product_image" binding:"required"`
+	Tags             []string               `json:"tags" binding:"required,gt=3,lt=5"`
+	ProductAttribute []ProductAttribute     `json:"product_attribute" binding:"required,gt=0,dive"`
+	ProductInfo      map[string]ProductInfo `json:"product_info" binding:"required,gt=0,dive"`
 }
 
 func NewProductHandler() *ProductHandler {
