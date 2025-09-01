@@ -42,6 +42,7 @@ func Lesson03RouteGroup() {
 		{
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryByCategoryV1)
+			category.POST("/", categoryHandlerV1.PostCategoryV1)
 		}
 
 		news := v1.Group("/news")
