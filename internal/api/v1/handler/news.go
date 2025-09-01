@@ -3,6 +3,7 @@ package v1handler
 import (
 	"net/http"
 
+	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -34,17 +35,17 @@ func (u *NewsHandler) GetNewsV1(ctx *gin.Context) {
 	}
 }
 
-// func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
-// 	var params PostNewsV1Param
-// 	if err := ctx.ShouldBind(&params); err != nil {
-// 		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
-// 		return
-// 	}
+func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
+	var params PostNewsV1Param
+	if err := ctx.ShouldBind(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
+		return
+	}
 
-// 	ctx.JSON(http.StatusOK, gin.H{
-// 		"message": "Post category (V1)",
-// 		"title":   params.Title,
-// 		"status":  params.Status,
-// 	})
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Post category (V1)",
+		"title":   params.Title,
+		"status":  params.Status,
+	})
 
-// }
+}
