@@ -28,6 +28,7 @@ type PostProductV1Param struct {
 	Price        int          `json:"price" binding:"required,min_int=100000"`
 	Display      *bool        `json:"display" binding:"omitempty"`
 	ProductImage ProductImage `json:"product_image" binding:"required"`
+	Tags         []string     `json:"tags" binding:"required,gt=3,lt=5"`
 }
 
 type ProductImage struct {
@@ -99,6 +100,7 @@ func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 		"price":         params.Price,
 		"display":       params.Display,
 		"product_image": params.ProductImage,
+		"tags":          params.Tags,
 	})
 }
 
