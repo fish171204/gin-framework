@@ -140,6 +140,8 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 				"filename": image.Filename,
 				"error":    err.Error(),
 			})
+
+			continue
 		}
 
 		// Không có lỗi khi validate file
