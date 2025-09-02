@@ -1,24 +1,31 @@
 package lesson
 
 import (
+	"log"
+
 	v1handler "github.com/fish171204/gin-framework/internal/api/v1/handler"
 	v2handler "github.com/fish171204/gin-framework/internal/api/v2/handler"
 	"github.com/fish171204/gin-framework/middleware"
 	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func Lesson03RouteGroup() {
 
 	if err := utils.RegisterValidators(); err != nil {
-		// stop
-		panic(err)
+		panic(err) // stop
+	}
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found")
 	}
 
 	r := gin.Default()
 
 	// Global Middleware
-	// r.Use(middleware.SimpleMiddleware())
+	r.Use(middleware.ApiKeyMiddleware())
 
 	v1 := r.Group("/api/v1/")
 	{
@@ -43,7 +50,7 @@ func Lesson03RouteGroup() {
 			product.DELETE("/:id", productHandlerV1.DeleteProductV1)
 		}
 
-		category := v1.Group("/categories").Use(middleware.SimpleMiddleware())
+		category := v1.Group("/categories")
 		{
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryByCategoryV1)
@@ -55,7 +62,8 @@ func Lesson03RouteGroup() {
 			newsHandlerV1 := v1handler.NewNewsHandler()
 			// trick dùng parameter optional = DefaultQuery (Query optional)
 			news.GET("/", newsHandlerV1.GetNewsV1)
-			news.GET("/:slug", middleware.SimpleMiddleware(), newsHandlerV1.GetNewsV1)
+			news.GET("/:slug", newsHandlerV1.GetNewsV1)
+
 			news.POST("/", newsHandlerV1.PostNewsV1)
 			news.POST("/upload-file/", newsHandlerV1.PostUploadFileNewsV1)
 			news.POST("/upload-multiple-file/", newsHandlerV1.PostUploadMultipleFileNewsV1)
