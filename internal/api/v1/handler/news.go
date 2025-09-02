@@ -54,6 +54,14 @@ func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	// Yêu cầu giới hạn file nhỏ hơn 5MB
+	// 1 << 20 = 1 * 1^20 = 1 * 1048576 = 1MB
+	// 1 << 20 = 5 * 1^20 = 5 * 1048576 = 5MB
+	if image.Size > 5<<20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "File too large (5 MB)"})
+		return
+	}
+
 	err = os.MkdirAll("./uploads", os.ModePerm)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Cannot create upload folder"})
