@@ -130,21 +130,33 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 		return
 	}
 
-	var saveFile []string
+	var successFiles []string
+	var failedFile []map[string]string
 	for _, image := range images {
 		filename, err := utils.ValidateAndSaveFile(image, "./uploads")
+		// Show failedFile trong response chỉ khi có lỗi
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
+			failedFile = append(failedFile, map[string]string{
+				"filename": image.Filename,
+				"error":    err.Error(),
+			})
 		}
 
-		saveFile = append(saveFile, filename)
+		// Không có lỗi khi validate file
+		successFiles = append(successFiles, filename)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
+	resp := gin.H{
 		"message": "Post news (V1)",
 		"title":   params.Title,
 		"status":  params.Status,
-		"images":  saveFile,
-	})
+		"images":  successFiles,
+	}
+
+	if len(failedFile) > 0 {
+		resp["message"] = "Upload completed with partial erros"
+		resp["error_files"] = failedFile
+	}
+
+	ctx.JSON(http.StatusOK, resp)
 }
