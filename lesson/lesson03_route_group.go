@@ -55,7 +55,7 @@ func Lesson03RouteGroup() {
 			newsHandlerV1 := v1handler.NewNewsHandler()
 			// trick dùng parameter optional = DefaultQuery (Query optional)
 			news.GET("/", newsHandlerV1.GetNewsV1)
-			news.GET("/:slug", newsHandlerV1.GetNewsV1)
+			news.GET("/:slug", middleware.SimpleMiddleware(), newsHandlerV1.GetNewsV1)
 			news.POST("/", newsHandlerV1.PostNewsV1)
 			news.POST("/upload-file/", newsHandlerV1.PostUploadFileNewsV1)
 			news.POST("/upload-multiple-file/", newsHandlerV1.PostUploadMultipleFileNewsV1)
