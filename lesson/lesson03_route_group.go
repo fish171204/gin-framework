@@ -72,5 +72,7 @@ func Lesson03RouteGroup() {
 
 	}
 
+	r.StaticFS("images", gin.Dir("./uploads", false))
+
 	r.Run(":8080")
 }
