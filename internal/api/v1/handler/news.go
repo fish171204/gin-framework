@@ -117,4 +117,17 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid multipart form"})
+		return
+	}
+
+	// Lấy ra danh sách file từ form.File['images]
+	images := form.File["images"]
+	if len(images) == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "No file provided"})
+		return
+	}
+
 }
