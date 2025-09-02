@@ -1,7 +1,57 @@
 package utils
 
-import "mime/multipart"
+import (
+	"errors"
+	"fmt"
+	"mime/multipart"
+	"net/http"
+	"path/filepath"
+	"strings"
+)
 
-func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) {
+var allowExts = map[string]bool{
+	".jpg":  true,
+	".jpeg": true,
+	".png":  true,
+}
 
+var allowMimeTypes = map[string]bool{
+	"image/jpeg": true, // .jpeg & .jpg
+	"image/png":  true,
+}
+
+const maxSize = 5 << 20
+
+func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) (string, error) {
+
+	// Check extension in filename
+	ext := strings.ToLower(filepath.Ext(FileHeader.Filename))
+	if !allowExts[ext] {
+		return "", errors.New("unsupported file extension")
+	}
+
+	// Check the file size
+	if FileHeader.Size > maxSize {
+		return "", errors.New("file too large (max %MB)")
+	}
+
+	// Check the file type
+	file, err := FileHeader.Open()
+	if err != nil {
+		return "", errors.New("cannot open file")
+	}
+	defer file.Close()
+
+	buffer := make([]byte, 512)
+	_, err = file.Read(buffer)
+	if err != nil {
+		return "", errors.New("cannot read file")
+	}
+
+	mimeType := http.DetectContentType(buffer)
+	if !allowMimeTypes[mimeType] {
+		return "", fmt.Errorf("invalid MIME type: %s", mimeType)
+	}
+
+	return "", nil
 }
