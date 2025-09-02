@@ -40,6 +40,8 @@ func (u *NewsHandler) GetNewsV1(ctx *gin.Context) {
 
 // // Body -> form-data
 func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
+	fmt.Println("=== PostNewsV1 started ===")
+
 	var params PostNewsV1Param
 	if err := ctx.ShouldBind(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
@@ -52,25 +54,24 @@ func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		return
 	}
 
-	// Trường hợp chưa có folder -> Tạo folder
-	// os.ModePerm = 0777 (octal)
-	// Có nghĩa: đọc, ghi, thực thi (read, write, execute) cho tất cả mọi người (owner, group, others)
 	err = os.MkdirAll("./uploads", os.ModePerm)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Cannot create upload folder"})
+		return
 	}
 
 	dst := fmt.Sprintf("./uploads/%s", filepath.Base(image.Filename))
 
 	if err := ctx.SaveUploadedFile(image, dst); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Cannot save file"})
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Post category (V1)",
+		"message": "Post news (V1)",
 		"title":   params.Title,
 		"status":  params.Status,
 		"image":   image.Filename,
+		"path":    dst,
 	})
-
 }
