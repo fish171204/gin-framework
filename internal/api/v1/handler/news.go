@@ -42,6 +42,11 @@ func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	image, err := ctx.FormFile("image")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "File is required"})
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Post category (V1)",
 		"title":   params.Title,
