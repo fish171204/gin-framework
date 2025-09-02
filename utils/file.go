@@ -36,7 +36,7 @@ func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) (st
 
 	// Check the file size
 	if FileHeader.Size > maxSize {
-		return "", errors.New("file too large (max %MB)")
+		return "", fmt.Errorf("file too large (max %dMB)", maxSize/(1<<20))
 	}
 
 	// Check the file type
@@ -61,17 +61,17 @@ func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) (st
 	filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
 
 	// Create folder if not exist
-	if err := os.MkdirAll("./uploads", os.ModePerm); err != nil {
+	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
 		return "", errors.New("cannot create upload folder")
 	}
 
 	// uploadDir "./upload" + filename ("abc.jpg")
-	savePath := filepath.Join(uploadDir + filename)
+	savePath := filepath.Join(uploadDir, filename)
 	if err := saveFile(FileHeader, savePath); err != nil {
 		return "", err
 	}
 
-	return "", nil
+	return filename, nil
 }
 
 func saveFile(FileHeader *multipart.FileHeader, destination string) error {
