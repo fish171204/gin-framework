@@ -109,3 +109,12 @@ func (n *NewsHandler) PostUploadFileNewsV1(ctx *gin.Context) {
 		"path":    "./upload/" + filename,
 	})
 }
+
+func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
+	var params PostNewsV1Param
+	if err := ctx.ShouldBind(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
+		return
+	}
+
+}
