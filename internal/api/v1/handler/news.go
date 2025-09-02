@@ -155,6 +155,7 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 		"images":  successFiles,
 	}
 
+	// Overwrite resp
 	if len(failedFile) > 0 {
 		resp["message"] = "Upload completed with partial erros"
 		resp["error_files"] = failedFile
