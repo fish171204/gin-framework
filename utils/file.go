@@ -60,6 +60,17 @@ func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) (st
 	// Change filename (abc.jpg)
 	filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
 
+	// Create folder if not exist
+	if err := os.MkdirAll("./uploads", os.ModePerm); err != nil {
+		return "", errors.New("cannot create upload folder")
+	}
+
+	// uploadDir "./upload" + filename ("abc.jpg")
+	savePath := filepath.Join(uploadDir + filename)
+	if err := saveFile(FileHeader, savePath); err != nil {
+		return "", err
+	}
+
 	return "", nil
 }
 
