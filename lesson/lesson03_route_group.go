@@ -18,7 +18,7 @@ func Lesson03RouteGroup() {
 	r := gin.Default()
 
 	// Global Middleware
-	r.Use(middleware.SimpleMiddleware())
+	// r.Use(middleware.SimpleMiddleware())
 
 	v1 := r.Group("/api/v1/")
 	{
@@ -43,7 +43,7 @@ func Lesson03RouteGroup() {
 			product.DELETE("/:id", productHandlerV1.DeleteProductV1)
 		}
 
-		category := v1.Group("/categories")
+		category := v1.Group("/categories").Use(middleware.SimpleMiddleware())
 		{
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryByCategoryV1)
