@@ -39,9 +39,7 @@ func (u *NewsHandler) GetNewsV1(ctx *gin.Context) {
 }
 
 // // Body -> form-data
-func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
-	fmt.Println("=== PostNewsV1 started ===")
-
+func (n *NewsHandler) PostNewsV1(ctx *gin.Context) {
 	var params PostNewsV1Param
 	if err := ctx.ShouldBind(&params); err != nil {
 		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
@@ -81,5 +79,26 @@ func (u *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		"status":  params.Status,
 		"image":   image.Filename,
 		"path":    dst,
+	})
+}
+
+func (n *NewsHandler) PostUploadFileNewsV1(ctx *gin.Context) {
+	var params PostNewsV1Param
+	if err := ctx.ShouldBind(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
+		return
+	}
+
+	image, err := ctx.FormFile("image")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "File is required"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Post news (V1)",
+		"title":   params.Title,
+		"status":  params.Status,
+		"image":   image.Filename,
 	})
 }

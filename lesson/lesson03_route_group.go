@@ -20,10 +20,10 @@ func Lesson03RouteGroup() {
 		user := v1.Group("/users")
 		{
 			userHandlerV1 := v1handler.NewUserHandler()
-			user.GET("", userHandlerV1.GetUsersV1)
+			user.GET("/", userHandlerV1.GetUsersV1)
 			user.GET("/:id", userHandlerV1.GetUsersByIdV1)
 			user.GET("/admin/:uuid", userHandlerV1.GetUsersByUuidV1)
-			user.POST("", userHandlerV1.PostUsersV1)
+			user.POST("/", userHandlerV1.PostUsersV1)
 			user.PUT("/:id", userHandlerV1.PutUsersV1)
 			user.DELETE("/:id", userHandlerV1.DeleteUsersV1)
 		}
@@ -31,9 +31,9 @@ func Lesson03RouteGroup() {
 		product := v1.Group("/products")
 		{
 			productHandlerV1 := v1handler.NewProductHandler()
-			product.GET("", productHandlerV1.GetProductV1)
+			product.GET("/", productHandlerV1.GetProductV1)
 			product.GET("/:slug", productHandlerV1.GetProductBySlugV1)
-			product.POST("", productHandlerV1.PostProductV1)
+			product.POST("/", productHandlerV1.PostProductV1)
 			product.PUT("/:id", productHandlerV1.PutProductV1)
 			product.DELETE("/:id", productHandlerV1.DeleteProductV1)
 		}
@@ -49,9 +49,10 @@ func Lesson03RouteGroup() {
 		{
 			newsHandlerV1 := v1handler.NewNewsHandler()
 			// trick dùng parameter optional = DefaultQuery (Query optional)
-			news.GET("", newsHandlerV1.GetNewsV1)
+			news.GET("/", newsHandlerV1.GetNewsV1)
 			news.GET("/:slug", newsHandlerV1.GetNewsV1)
 			news.POST("/", newsHandlerV1.PostNewsV1)
+			news.POST("/upload-file/", newsHandlerV1.PostUploadFileNewsV1)
 		}
 	}
 
@@ -60,9 +61,9 @@ func Lesson03RouteGroup() {
 		user := v2.Group("/users")
 		{
 			userHandlerV2 := v2handler.NewUserHandler()
-			user.GET("", userHandlerV2.GetUsersV2)
+			user.GET("/", userHandlerV2.GetUsersV2)
 			user.GET("/:id", userHandlerV2.GetUsersByIdV2)
-			user.POST("", userHandlerV2.PostUsersV2)
+			user.POST("/", userHandlerV2.PostUsersV2)
 			user.PUT("/:id", userHandlerV2.PutUsersV2)
 			user.DELETE("/:id", userHandlerV2.DeleteUsersV2)
 		}
