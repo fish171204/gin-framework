@@ -36,6 +36,7 @@ func (u *CategoryHandler) GetCategoryByCategoryV1(ctx *gin.Context) {
 	})
 }
 
+// Body -> x-www-form-urlencoded
 func (u *CategoryHandler) PostCategoryV1(ctx *gin.Context) {
 	var params PostCategoryV1Param
 	if err := ctx.ShouldBind(&params); err != nil {

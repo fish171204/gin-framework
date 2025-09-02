@@ -97,6 +97,7 @@ func (u *ProductHandler) GetProductBySlugV1(ctx *gin.Context) {
 	})
 }
 
+// Body -> raw (json)
 func (u *ProductHandler) PostProductV1(ctx *gin.Context) {
 	var params PostProductV1Param
 	if err := ctx.ShouldBindJSON(&params); err != nil {
