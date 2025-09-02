@@ -130,4 +130,21 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	var saveFile []string
+	for _, image := range images {
+		filename, err := utils.ValidateAndSaveFile(image, "./uploads")
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		saveFile = append(saveFile, filename)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Post news (V1)",
+		"title":   params.Title,
+		"status":  params.Status,
+		"images":  saveFile,
+	})
 }
