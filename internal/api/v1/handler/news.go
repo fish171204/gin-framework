@@ -144,7 +144,6 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 			continue
 		}
 
-		// Không có lỗi khi validate file
 		successFiles = append(successFiles, filename)
 	}
 
@@ -155,7 +154,7 @@ func (n *NewsHandler) PostUploadMultipleFileNewsV1(ctx *gin.Context) {
 		"images":  successFiles,
 	}
 
-	// Overwrite resp
+	// Overwrite resp when failedFile exists
 	if len(failedFile) > 0 {
 		resp["message"] = "Upload completed with partial erros"
 		resp["error_files"] = failedFile
