@@ -20,13 +20,13 @@ func main() {
 		fmt.Println("Running Lesson 02: Gin Starter")
 		lesson.Lesson02GinStarter()
 	case "lesson03":
-		fmt.Println("Running Lesson 03: Route Group")
+		fmt.Println("Running Lesson 03: Route Group - Middleware")
 		lesson.Lesson03RouteGroup()
 	case "":
 		fmt.Println("Please specify a lesson to run:")
 		fmt.Println("  go run . -lesson=lesson01  (for HTTP package lesson)")
 		fmt.Println("  go run . -lesson=lesson02  (for Gin starter lesson)")
-		fmt.Println("  go run . -lesson=lesson03  (for Route Group lesson)")
+		fmt.Println("  go run . -lesson=lesson03  (for Route Group lesson - Middleware)")
 	default:
 		log.Fatalf("Unknown lesson: %s. Available lessons: lesson01, lesson02, lesson03", *lessonPtr)
 	}

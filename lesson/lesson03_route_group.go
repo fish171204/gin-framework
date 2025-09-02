@@ -3,17 +3,22 @@ package lesson
 import (
 	v1handler "github.com/fish171204/gin-framework/internal/api/v1/handler"
 	v2handler "github.com/fish171204/gin-framework/internal/api/v2/handler"
+	"github.com/fish171204/gin-framework/middleware"
 	"github.com/fish171204/gin-framework/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func Lesson03RouteGroup() {
-	r := gin.Default()
 
 	if err := utils.RegisterValidators(); err != nil {
 		// stop
 		panic(err)
 	}
+
+	r := gin.Default()
+
+	// Global Middleware
+	r.Use(middleware.SimpleMiddleware())
 
 	v1 := r.Group("/api/v1/")
 	{
