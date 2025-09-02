@@ -95,6 +95,8 @@ func (n *NewsHandler) PostUploadFileNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	utils.ValidateAndSaveFile(image, "./uploads")
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Post news (V1)",
 		"title":   params.Title,
