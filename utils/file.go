@@ -3,10 +3,14 @@ package utils
 import (
 	"errors"
 	"fmt"
+	"io"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 var allowExts = map[string]bool{
@@ -53,5 +57,29 @@ func ValidateAndSaveFile(FileHeader *multipart.FileHeader, uploadDir string) (st
 		return "", fmt.Errorf("invalid MIME type: %s", mimeType)
 	}
 
+	// Change filename (abc.jpg)
+	filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
+
 	return "", nil
+}
+
+func saveFile(FileHeader *multipart.FileHeader, destination string) error {
+	// Open the current file
+	src, err := FileHeader.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// Create destination file
+	out, err := os.Create(destination)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	// Move current file -> destination file
+	_, err = io.Copy(out, src)
+
+	return err
 }
