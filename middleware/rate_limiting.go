@@ -8,6 +8,9 @@ import (
 
 func getClientIP(ctx *gin.Context) string {
 	ip := ctx.ClientIP()
+	if ip == "" {
+		ip = ctx.Request.RemoteAddr
+	}
 
 	return ip
 }
