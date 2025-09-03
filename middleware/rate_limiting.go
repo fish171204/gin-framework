@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"log"
+	"net/http"
 	"sync"
 	"time"
 
@@ -48,6 +48,13 @@ func getRateLimiter(ip string) *rate.Limiter {
 func RateLimitingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ip := getClientIP(ctx)
-		log.Default()
+
+		limiter := getRateLimiter(ip)
+		if !limiter.Allow() {
+			ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":   "Too many request",
+				"message": "Bạn đã gửi quá nhiều request. Hảy thử lại sau",
+			})
+		}
 	}
 }
