@@ -24,6 +24,8 @@ func Lesson03RouteGroup() {
 
 	r := gin.Default()
 
+	go middleware.CleanupClients()
+
 	// Global Middleware
 	r.Use(middleware.ApiKeyMiddleware(), middleware.RateLimitingMiddleware())
 
