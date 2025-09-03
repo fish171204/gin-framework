@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"log"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,7 @@ type Client struct {
 }
 
 var (
+	mu      sync.Mutex
 	clients = make(map[string]Client)
 )
 
@@ -27,8 +29,8 @@ func getClientIP(ctx *gin.Context) string {
 }
 
 func getRateLimiter(ip string) *rate.Limiter {
-	// mu.Lock()
-	// defer mu.Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 	client, exists := clients[ip]
 	// IP does not exist → create new
 	if !exists {
