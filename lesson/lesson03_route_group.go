@@ -25,7 +25,7 @@ func Lesson03RouteGroup() {
 	r := gin.Default()
 
 	// Global Middleware
-	r.Use(middleware.ApiKeyMiddleware())
+	r.Use(middleware.ApiKeyMiddleware(), middleware.RateLimitingMiddleware())
 
 	v1 := r.Group("/api/v1/")
 	{
