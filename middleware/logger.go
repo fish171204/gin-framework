@@ -46,7 +46,8 @@ func LoggerMiddleware() gin.HandlerFunc {
 			Int64("content_length", ctx.Request.ContentLength).
 			Interface("headers", ctx.Request.Header).
 			Int("status_code", ctx.Writer.Status()).
-			Int64("duration_ms", duration.Microseconds())
+			Int64("duration_ms", duration.Microseconds()).
+			Msg("HTTP Request Log")
 
 	}
 }
