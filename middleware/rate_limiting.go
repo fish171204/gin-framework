@@ -45,6 +45,19 @@ func getRateLimiter(ip string) *rate.Limiter {
 	return client.limiter
 }
 
+func CleanupClients() {
+	for {
+		time.Sleep(time.Minute)
+		mu.Lock()
+		for ip, client := range clients {
+			if time.Since(client.lassSeen) > 3*time.Minute {
+				delete(clients, ip)
+			}
+		}
+		mu.Unlock()
+	}
+}
+
 func RateLimitingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ip := getClientIP(ctx)
