@@ -34,7 +34,7 @@ func getRateLimiter(ip string) *rate.Limiter {
 	client, exists := clients[ip]
 	// IP does not exist → create new
 	if !exists {
-		limiter := rate.NewLimiter(5, 10) // 5 request/s , brust : 10 (max)
+		limiter := rate.NewLimiter(5, 10) // 5 request/s , brust : 10 (max), ban đầu 10, hết 10 cấp phát thêm 5 rq mỗi giây
 		newClient := &Client{limiter, time.Now()}
 		clients[ip] = *newClient
 
@@ -42,6 +42,7 @@ func getRateLimiter(ip string) *rate.Limiter {
 	}
 
 	client.lassSeen = time.Now()
+	clients[ip] = client
 	return client.limiter
 }
 
@@ -58,6 +59,7 @@ func CleanupClients() {
 	}
 }
 
+// hey -n 20 -c 1 -H "X-API-Key:(trong .env)" http://localhost:8080/api/v1/categories/golang
 func RateLimitingMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ip := getClientIP(ctx)
@@ -66,8 +68,11 @@ func RateLimitingMiddleware() gin.HandlerFunc {
 		if !limiter.Allow() {
 			ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 				"error":   "Too many request",
-				"message": "Bạn đã gửi quá nhiều request. Hảy thử lại sau",
+				"message": "Bạn đã gửi quá nhiều request. Hãy thử lại sau",
 			})
+			return
 		}
+
+		ctx.Next()
 	}
 }
