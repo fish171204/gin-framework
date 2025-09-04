@@ -3,8 +3,10 @@ package middleware
 import (
 	"bytes"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,20 +29,28 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 		start := time.Now()
-		contentType := ctx.GetHeader("Conttent-Typpe")
-
-		bodyBytes, err := io.ReadAll(ctx.Request.Body)
-		if err != nil {
-			logger.Error().Err(err).Msg("Failed to read request body")
-		}
-
-		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
-
-		// Content-Type: application/json
-
-		// Content-Type: application/x-www-form-urlencoded
+		contentType := ctx.GetHeader("Content-Typpe")
+		requestBody := make(map[string]any)
 
 		// Content-Type: multipart/form-data
+		if strings.HasPrefix(contentType, "multipart/form-data") {
+			log.Println("multipart/form-data")
+		} else {
+
+			bodyBytes, err := io.ReadAll(ctx.Request.Body)
+			if err != nil {
+				logger.Error().Err(err).Msg("Failed to read request body")
+			}
+
+			ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+			// Content-Type: application/json
+			if strings.HasPrefix(contentType, "application/json") {
+
+			} else {
+				// Content-Type: application/x-www-form-urlencoded
+			}
+		}
 
 		ctx.Next()
 
