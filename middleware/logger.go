@@ -30,14 +30,21 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 		duration := time.Since(statt)
 
+		statusCode := ctx.Writer.Status()
+
 		logEvent := logger.Info()
+		if statusCode >= 500 {
+			logEvent = logger.Error()
+		} else if statusCode >= 400 {
+			logEvent = logger.Warn()
+		}
 
 		logEvent.
 			Str("method", ctx.Request.Method).
 			Str("path", ctx.Request.URL.Path).
 			Str("query", ctx.Request.URL.RawPath).
 			Str("client_ip", ctx.ClientIP()).
-			Str("user_agent", ctx.Request.UserAgent()). // FireFox, Google, Safari...
+			Str("user_agent", ctx.Request.UserAgent()). // FireFox, Google, Safari, Postman...
 			Str("referer", ctx.Request.Referer()).      // Zalo, Fb -> my API
 			Str("protocal", ctx.Request.Proto).         // http, https
 			Str("host", ctx.Request.Host).
@@ -45,7 +52,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 			Str("request_uri", ctx.Request.RequestURI).
 			Int64("content_length", ctx.Request.ContentLength).
 			Interface("headers", ctx.Request.Header).
-			Int("status_code", ctx.Writer.Status()).
+			Int("status_code", statusCode).
 			Int64("duration_ms", duration.Microseconds()).
 			Msg("HTTP Request Log")
 
