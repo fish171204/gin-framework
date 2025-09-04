@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"encoding/json"
 	"io"
 	"log"
 	"os"
@@ -46,7 +47,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 			// Content-Type: application/json
 			if strings.HasPrefix(contentType, "application/json") {
-
+				_ = json.Unmarshal(bodyBytes, &requestBody)
 			} else {
 				// Content-Type: application/x-www-form-urlencoded
 			}
