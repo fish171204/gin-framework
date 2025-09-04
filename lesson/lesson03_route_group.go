@@ -23,6 +23,7 @@ func Lesson03RouteGroup() {
 	}
 
 	r := gin.Default()
+	r.StaticFS("images", gin.Dir("./uploads", false))
 
 	go middleware.CleanupClients()
 
@@ -90,8 +91,6 @@ func Lesson03RouteGroup() {
 		}
 
 	}
-
-	r.StaticFS("images", gin.Dir("./uploads", false))
 
 	r.Run(":8080")
 }
