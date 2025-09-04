@@ -30,7 +30,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 		start := time.Now()
-		contentType := ctx.GetHeader("Content-Typpe")
+		contentType := ctx.GetHeader("Content-Type")
 		requestBody := make(map[string]any)
 
 		// Content-Type: multipart/form-data
@@ -69,11 +69,11 @@ func LoggerMiddleware() gin.HandlerFunc {
 		logEvent.
 			Str("method", ctx.Request.Method).
 			Str("path", ctx.Request.URL.Path).
-			Str("query", ctx.Request.URL.RawPath).
+			Str("query", ctx.Request.URL.RawQuery).
 			Str("client_ip", ctx.ClientIP()).
 			Str("user_agent", ctx.Request.UserAgent()). // FireFox, Google, Safari, Postman...
 			Str("referer", ctx.Request.Referer()).      // Zalo, Fb -> my API
-			Str("protocal", ctx.Request.Proto).         // http, https
+			Str("protocol", ctx.Request.Proto).         // http, https
 			Str("host", ctx.Request.Host).
 			Str("remote_addr", ctx.Request.RemoteAddr). // Proxy add: 1.1.1.
 			Str("request_uri", ctx.Request.RequestURI).
