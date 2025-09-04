@@ -58,6 +58,9 @@ func LoggerMiddleware() gin.HandlerFunc {
 					}
 				}
 
+				if len(formFiles) > 0 {
+					requestBody["form_files"] = formFiles
+				}
 			}
 		} else {
 
