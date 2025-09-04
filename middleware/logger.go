@@ -33,6 +33,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 		start := time.Now()
 		contentType := ctx.GetHeader("Content-Type")
 		requestBody := make(map[string]any)
+		var formFiles []map[string]any
 
 		// Content-Type: multipart/form-data
 		if strings.HasPrefix(contentType, "multipart/form-data") {
@@ -43,6 +44,13 @@ func LoggerMiddleware() gin.HandlerFunc {
 						requestBody[key] = vals[0]
 					} else {
 						requestBody[key] = vals
+					}
+				}
+
+				// for file
+				for key, vals := range ctx.Request.MultipartForm.File {
+					for _, f := range files {
+
 					}
 				}
 			}
