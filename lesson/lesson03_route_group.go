@@ -27,7 +27,11 @@ func Lesson03RouteGroup() {
 	go middleware.CleanupClients()
 
 	// Global Middleware
-	r.Use(middleware.ApiKeyMiddleware(), middleware.RateLimitingMiddleware(), middleware.LoggerMiddleware())
+	r.Use(
+		middleware.LoggerMiddleware(),
+		middleware.ApiKeyMiddleware(),
+		middleware.RateLimitingMiddleware(),
+	)
 
 	v1 := r.Group("/api/v1/")
 	{
