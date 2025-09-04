@@ -53,7 +53,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 						formFiles = append(formFiles, map[string]any{
 							"field":        field,
 							"filename":     f.Filename,
-							"size":         f.Size,
+							"size":         formatFileSize(f.Size),
 							"content_type": f.Header.Get("Content-Type"),
 						})
 					}
