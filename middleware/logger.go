@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -50,6 +51,14 @@ func LoggerMiddleware() gin.HandlerFunc {
 				_ = json.Unmarshal(bodyBytes, &requestBody)
 			} else {
 				// Content-Type: application/x-www-form-urlencoded
+				values, _ := url.ParseQuery(string(bodyBytes))
+				for key, vals := range values {
+					if len(vals) == 1 {
+						requestBody[key] = vals[0]
+					} else {
+						requestBody[key] = vals
+					}
+				}
 			}
 		}
 
@@ -75,7 +84,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 			Str("referer", ctx.Request.Referer()).      // Zalo, Fb -> my API
 			Str("protocol", ctx.Request.Proto).         // http, https
 			Str("host", ctx.Request.Host).
-			Str("remote_addr", ctx.Request.RemoteAddr). // Proxy add: 1.1.1.
+			Str("remote_addr", ctx.Request.RemoteAddr). // Proxy address: 1.1.1.
 			Str("request_uri", ctx.Request.RequestURI).
 			Int64("content_length", ctx.Request.ContentLength).
 			Interface("headers", ctx.Request.Header).
