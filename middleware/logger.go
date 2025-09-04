@@ -36,7 +36,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 		// Content-Type: multipart/form-data
 		if strings.HasPrefix(contentType, "multipart/form-data") {
-			if err := ctx.Request.ParseMultipartForm(32 << 20); err != nil && ctx.Request.MultipartForm != nil {
+			if err := ctx.Request.ParseMultipartForm(32 << 20); err == nil && ctx.Request.MultipartForm != nil {
 				// for value
 				for key, vals := range ctx.Request.MultipartForm.Value {
 					if len(vals) == 1 {
