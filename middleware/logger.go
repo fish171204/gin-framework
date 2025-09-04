@@ -27,6 +27,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 		start := time.Now()
+		contentType := ctx.GetHeader("Conttent-Typpe")
 
 		bodyBytes, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
@@ -34,6 +35,12 @@ func LoggerMiddleware() gin.HandlerFunc {
 		}
 
 		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+		// Content-Type: application/json
+
+		// Content-Type: application/x-www-form-urlencoded
+
+		// Content-Type: multipart/form-data
 
 		ctx.Next()
 
