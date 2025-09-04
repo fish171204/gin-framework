@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/url"
 	"os"
@@ -118,5 +119,16 @@ func LoggerMiddleware() gin.HandlerFunc {
 			Int64("duration_ms", duration.Microseconds()).
 			Msg("HTTP Request Log")
 
+	}
+}
+
+func formatFileSize(size int64) string {
+	switch {
+	case size >= 1<<20: // 1 MB
+		return fmt.Sprintf("%.2f MB", float64(size)/(1<<20))
+	case size >= 1<<10: // 1 KB
+		return fmt.Sprintf("%.2f KB", float64(size)/(1<<10))
+	default:
+		return fmt.Sprintf("%d B", size)
 	}
 }
