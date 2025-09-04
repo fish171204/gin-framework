@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"path/filepath"
 	"time"
@@ -24,11 +26,18 @@ func LoggerMiddleware() gin.HandlerFunc {
 	logger := zerolog.New(logFile).With().Timestamp().Logger()
 
 	return func(ctx *gin.Context) {
-		statt := time.Now()
+		start := time.Now()
+
+		bodyBytes, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			logger.Error().Err(err).Msg("Failed to read request body")
+		}
+
+		ctx.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
 		ctx.Next()
 
-		duration := time.Since(statt)
+		duration := time.Since(start)
 
 		statusCode := ctx.Writer.Status()
 
