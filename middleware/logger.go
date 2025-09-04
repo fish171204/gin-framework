@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -48,13 +47,18 @@ func LoggerMiddleware() gin.HandlerFunc {
 				}
 
 				// for file
-				for key, vals := range ctx.Request.MultipartForm.File {
+				for field, files := range ctx.Request.MultipartForm.File {
 					for _, f := range files {
-
+						formFiles = append(formFiles, map[string]any{
+							"field":        field,
+							"filename":     f.Filename,
+							"size":         f.Size,
+							"content_type": f.Header.Get("Content-Type"),
+						})
 					}
 				}
+
 			}
-			log.Println("multipart/form-data")
 		} else {
 
 			bodyBytes, err := io.ReadAll(ctx.Request.Body)
