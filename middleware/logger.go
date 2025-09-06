@@ -122,7 +122,9 @@ func LoggerMiddleware() gin.HandlerFunc {
 		} else if strings.HasPrefix(responseContentType, "application/json") ||
 			strings.HasPrefix(strings.TrimSpace(responseBodyRaw), "{") ||
 			strings.HasPrefix(strings.TrimSpace(responseBodyRaw), "[") {
-
+			if err := json.Unmarshal([]byte(responseBodyRaw), &responseBodyParsed); err != nil {
+				responseBodyParsed = responseBodyRaw
+			}
 		} else {
 			responseBodyParsed = responseBodyRaw
 		}
