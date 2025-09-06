@@ -16,6 +16,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// Response
 type CustomResponseWriter struct {
 	gin.ResponseWriter
 	body *bytes.Buffer
@@ -41,6 +42,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 	logger := zerolog.New(logFile).With().Timestamp().Logger()
 
 	return func(ctx *gin.Context) {
+		// Request
 		start := time.Now()
 		contentType := ctx.GetHeader("Content-Type")
 		requestBody := make(map[string]any)
@@ -99,6 +101,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 			}
 		}
 
+		// // Response
 		customeWriter := &CustomResponseWriter{
 			ResponseWriter: ctx.Writer,
 			body:           bytes.NewBufferString(""),
@@ -111,6 +114,7 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 		statusCode := ctx.Writer.Status()
 
+		responseContentType := ctx.Writer.Header().Get("Content-Type")
 		responseBodyRaw := customeWriter.body.String()
 		log.Printf("%s", responseBodyRaw)
 
