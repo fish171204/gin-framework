@@ -15,6 +15,16 @@ import (
 	"github.com/rs/zerolog"
 )
 
+type CustomResponseWriter struct {
+	gin.ResponseWriter
+	body *bytes.Buffer
+}
+
+func (w *CustomResponseWriter) Write(data []byte) (n int, err error) {
+	w.body.Write(data)
+	return w.ResponseWriter.Write(data)
+}
+
 func LoggerMiddleware() gin.HandlerFunc {
 	logPath := "log/http.log"
 
