@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -98,11 +99,20 @@ func LoggerMiddleware() gin.HandlerFunc {
 			}
 		}
 
+		customeWriter := &CustomResponseWriter{
+			ResponseWriter: ctx.Writer,
+			body:           bytes.NewBufferString(""),
+		}
+		ctx.Writer = customeWriter
+
 		ctx.Next()
 
 		duration := time.Since(start)
 
 		statusCode := ctx.Writer.Status()
+
+		responseBodyRaw := customeWriter.body.String()
+		log.Printf("%s", responseBodyRaw)
 
 		logEvent := logger.Info()
 		if statusCode >= 500 {
