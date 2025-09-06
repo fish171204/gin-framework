@@ -30,9 +30,15 @@ func (u *CategoryHandler) GetCategoryByCategoryV1(ctx *gin.Context) {
 		return
 	}
 
+	value, exists := ctx.Get("username")
+	if !exists {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "Missing username"})
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"message":  "Category found",
 		"category": params.Category,
+		"username": value,
 	})
 }
 
