@@ -119,6 +119,12 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 		if strings.HasPrefix(responseContentType, "image/") {
 			responseBodyParsed = "[BINARY DATA]"
+		} else if strings.HasPrefix(responseContentType, "application/json") ||
+			strings.HasPrefix(strings.TrimSpace(responseBodyRaw), "{") ||
+			strings.HasPrefix(strings.TrimSpace(responseBodyRaw), "[") {
+
+		} else {
+			responseBodyParsed = responseBodyRaw
 		}
 
 		logEvent := logger.Info()
