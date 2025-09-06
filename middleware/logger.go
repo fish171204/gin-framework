@@ -30,11 +30,11 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 	logger := zerolog.New(&lumberjack.Logger{
 		Filename:   logPath,
-		MaxSize:    1, // MV
-		MaxBackups: 5,
-		MaxAge:     5,    //days
-		Compress:   true, // disabled by default
-		LocalTime:  true,
+		MaxSize:    1,    // MB
+		MaxBackups: 5,    // number of backup files
+		MaxAge:     5,    // days before deletion
+		Compress:   true, // disabled by default (compress)
+		LocalTime:  true, // use local time in log
 	}).With().Timestamp().Logger()
 
 	return func(ctx *gin.Context) {
