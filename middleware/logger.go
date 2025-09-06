@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -101,7 +100,6 @@ func LoggerMiddleware() gin.HandlerFunc {
 			}
 		}
 
-		// // Response
 		customeWriter := &CustomResponseWriter{
 			ResponseWriter: ctx.Writer,
 			body:           bytes.NewBufferString(""),
@@ -114,9 +112,14 @@ func LoggerMiddleware() gin.HandlerFunc {
 
 		statusCode := ctx.Writer.Status()
 
+		// Response
 		responseContentType := ctx.Writer.Header().Get("Content-Type")
 		responseBodyRaw := customeWriter.body.String()
-		log.Printf("%s", responseBodyRaw)
+		var responseBodyParsed interface{}
+
+		if strings.HasPrefix(responseContentType, "image/") {
+			responseBodyParsed = "[BINARY DATA]"
+		}
 
 		logEvent := logger.Info()
 		if statusCode >= 500 {
